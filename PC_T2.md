@@ -25,33 +25,33 @@ No deadlock: todos los procesos entran en la sección crítica alguna vez.
 Objetivo: encontrar formas de paralelizar un programa para que se hagan cómputos a la vez y mejorar el rendomiento.
 EJ : Buscar instancias de patrón en fichero PRODUCTOR-CONSUMIDOR.
 
-String linea;
-bool done = False,buffer_lleno = FALSE,buffer_vacio = FALSE;
-CO {/*productor*/
-	String linea2;
-	while(true){
-		linea2 = getLine(fd);
-		if(EOF){
-			done = true;
-			break;
-		}	
-		wait buffer_vacio;
-		buffer = linea2;
-		signal buffer_lleno;
+	String linea;
+	bool done = False,buffer_lleno = FALSE,buffer_vacio = FALSE;
+	CO {/*productor*/
+		String linea2;
+		while(true){
+			linea2 = getLine(fd);
+			if(EOF){
+				done = true;
+				break;
+			}	
+			wait buffer_vacio;
+			buffer = linea2;
+			signal buffer_lleno;
+		}
 	}
-}
-CO {/*consumidor*/
-	String linea1;
-	while(true){
-		wait buffer_lleno or done == true;
-		if(done) break;
-		linea1 = buffer;
-		signal buffer_vacio;
-		encontrado = buscar(linea1,patron);
-		if(encontrado) print(linea1);
+	CO {/*consumidor*/
+		String linea1;
+		while(true){
+			wait buffer_lleno or done == true;
+			if(done) break;
+			linea1 = buffer;
+			signal buffer_vacio;
+			encontrado = buscar(linea1,patron);
+			if(encontrado) print(linea1);
+		}
+
 	}
-	
-}
 ### Sincronización
 EJ : Búsqueda del elemento máximo de un array DOUBLE CHECK.
 
@@ -71,23 +71,24 @@ x = e parece ATÓMICA si cumple at-most-once. (<e> = e)
 #### <AWAIT(B) S;>
 Se adquiere el LOCK cuando B = TRUE.
 EJ:
-int buf = 0, p = 0, c = 0;
-process Productor{
-	int a[n] = inicializa();
-	while(p < n){
-		<await (p == c);>
-		buf = a[p];
-		p = p + 1;
+	
+	int buf = 0, p = 0, c = 0;
+	process Productor{
+		int a[n] = inicializa();
+		while(p < n){
+			<await (p == c);>
+			buf = a[p];
+			p = p + 1;
+		}
 	}
-}
-process Consumidor{
-	int b[n];
-	while(c < p){
-		<await (c < p);>
-		buf = b[c];
-		c = c + 1;
+	process Consumidor{
+		int b[n];
+		while(c < p){
+			<await (c < p);>
+			buf = b[c];
+			c = c + 1;
+		}
 	}
-}
 ### Semántica de programas concurrentes
 Lógica de programación: sistema lógico formal que permite establecer y demostrar propiedades de los programas.
 ### Propiedades de seguridad y viveza
