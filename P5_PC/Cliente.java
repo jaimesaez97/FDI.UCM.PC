@@ -6,14 +6,23 @@ class Cliente {
     
     private String userName;
     private String ip;
-    private Socket s;
-    // private FlujoEntrada fin;
-    // private FlujoSalida fout;
+    private Socket socket;
+    private PrintWriter fout;
+    private BufferedReader fin;
     
-    public Cliente (String name, String ip) {
+    public Cliente (String name, String ip, Socket s, PrintWriter pw, BufferedReader br) {
         super();
         this.userName = name;
         this.ip =  ip;
+        this.socket = s;
+        this.fout = pw;
+        this.fin = br;
+    }
+    
+    public void run(){
+        while(true){
+            
+        }
     }
     
     public static void main(String[] args){
