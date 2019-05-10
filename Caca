@@ -1,0 +1,113 @@
+Examen Junio 2015.
+
+1. 
+- Resolver problema de la SC usando un coordinador y arrays (sin necesidad de instrucciones atómicas) donde: 
+	- Cada proceso "usuario" interacciona con el coordinador para indicarle que quiere entrar en SC y también cuando sale.
+	- Coordinador "escucha" a los procesos usuario y da permiso de entrada.
+a) 
+- Asume N procesos usuario [1..N]
+- Escribe código que los procesos ejecutan para CSEntry y para CSExit.
+- SOLUCIÓN JUSTA
+- No asumir ejecución atómica ni await
+
+Vamos a utilizar la solución rompe-empate.
+Variables:
+	in[1..N] =([N]0);
+	last[1..N] = ([N]0);
+CSEntry proc-i:
+	for[j = 1 to N]{
+		last[j] = i;
+		in[i] = j;
+		for[k = 1 to N with k != i]
+			while(in[k] > in[i] && last[j] == i)
+				;
+	}
+CSExit proc-i:
+	in[i] = 0;
+
+Coordinador:
+	¿?¿?
+	for[i=1 to N]{
+		in[i] = 1;
+	}
+
+b)¿Cómo garantizas exclusión mutua?
+c)¿Por qué la solución es justa?
+	
+2. 
+- N consumidores(pájaros), 1 productor.
+- Buffer inicial = W.
+- Cada pájaro coge 1 solo gusano y se lo come.
+- Máx 1 pájaro a la vez.
+- El pájaro que come último gusano despierta al productor para que rellene.
+
+Variables Compartidas:
+	sem empty = 0, full = 1, mtx = 1;
+	int sharedBuffer = W;
+	int nr = 0, dr = 0;
+	
+Proceso Productor:
+	process Productor{	/*while(1)*/
+		P(mtx);
+		if(sharedBuffer > 0){
+			V(mtx);
+			P(empty);
+		} else V(mtx);
+		
+		sharedBuffer = W;
+		
+		P(mtx);
+		
+		if(dr > 0){
+			dr = dr - 1;
+			V(full);
+		} else V(mtx);
+		
+	}
+Procesos Consumidor:
+	process Consumidor[i = 1 to N]{	/*while(1)*/
+		P(mtx);
+		if(nr > 0){
+			dr = dr + 1;
+			V(mtx);
+			P(full);
+		}
+		nr = nr + 1;	
+		
+		if(dr > 0){
+			dr = dr - 1;
+			V(full);		/* Paso de Testigo a CONSUMIDORES */
+		} else V(mtx);
+		
+		if(sharedBuffer > 0)
+			sharedBuffer = sharedBuffer - 1;
+		else{
+			V(empty);
+			P(full);
+		}	
+	}
+
+3. CENA DE LOS FILÓSOFOS 
+- Asumimos disciplina signal and continue.
+- Dos filosofos vecinos no comen a la vez.
+- Evitar bloqueo.
+- Solución justa.
+
+	/* id = x € [0..N-1]*/
+monitor CenaFilosofos {
+	cond espera_comer;
+	int tenedor = 0;	
+		/* 0 : libre; X : filósofo que lo tiene */
+	
+	procedure cogerTenedores(int id){
+		while(comiendo != id)
+			wait(espera_comer);	
+		
+		/* Comer */
+	}
+	
+	procedure soltarTenedores(id){
+		comiendo = (comiendo + id) % N;
+		signal_all(espera_comer);
+	}
+}

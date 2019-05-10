@@ -112,7 +112,29 @@ Porque es la solución **tie-break**, que por definición es justa.
 - Solución debe ser justa de forma que un filósofo que invoca **cogerTenedores** finalmente sea atendido.
 - RECORDATORIO: Declara las variables de condición que necesites (de tipo cond) y utiliza las instrucciones *wait(cola)* para suspender al proceso en ejecución en la cola asociada a la variable de condición que recibe como parámetro, *signal(cola)* para despertar a un proceso de la cola asociada a la variable de condición que recibe como parámetro, *signal all(cola)* para despertar a todos los procesos de la cola, y *empty(cola)* para comprobar si la cola esta vacía.
 
-        queue fork;
+		- Asumimos disciplina signal and continue.
+		- Dos filosofos vecinos no comen a la vez.
+		- Evitar bloqueo.
+		- Solución justa.
+
+			/* id = x € [0..N-1]*/
+		monitor CenaFilosofos {
+			cond espera_comer;
+			int tenedor = 0;	
+				/* 0 : libre; X : filósofo que lo tiene */
+
+			procedure cogerTenedores(int id){
+				while(tenedor != id)
+					wait(espera_comer);	
+
+				/* Comer */
+			}
+
+			procedure soltarTenedores(id){
+				tenedor = (id + 1) % N;
+				signal_all(espera_comer);
+			}
+		}
         
 
 
@@ -131,4 +153,14 @@ Porque es la solución **tie-break**, que por definición es justa.
             private BufferedReader br;
             private Socket s;
             private PrintWriter pw;
+			
+			public class Request extends Thread {
+			
+			}
+			
+			public boolean request(int clientId){
+				Socket s = new Socket(ss.getInetAddress(),10008);
+				
+			}
+			
         }

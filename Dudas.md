@@ -12,8 +12,14 @@
     2.1. Ejercicio 1
         - ¿Qué solución hay con arrays y coordinador? ¿Hace falta coordinador?
     2.2. Ejercicio 2
-        - ¿Está bien?
+        -   ¿Esto va antes o después de liberar el cerrojo? (En PROD & CONS)
+			if(sharedBuffer > 0)
+				sharedBuffer = sharedBuffer - 1;
+			else{
+				V(empty);
+				P(full);
+			}
     2.3. Ejercicio 3
-        - ¿Cómo es CENA_FILOSÓFOS con colas condición?
+        - ¿Cómo se completa?
     2.4. Ejercicio 4
-        - 
+        - ¿Cómo se hace?
