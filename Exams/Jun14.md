@@ -1,7 +1,7 @@
 # Examen Programación Concurrente 
 ## Junio 2014
 
-### (2 puntos)
+### 1. (2 puntos)
 - Considera el siguiente fragmento de código:
 
         int x = 0;
@@ -41,11 +41,12 @@ Posibles valores de x:
 
 - Desarrolla una solución al *problema de la sección crítica* usando **Exchange**. Concretamente, proporciona el código para **CSEntry** y **CSExit** que utilizan la variable **lock** declarada a continuación. La solución no tiene que ser justa.
 
-        int lock = 0;
+
+    	int lock = 0;
 CSEntry
     
     int myLock = 1;
-    Exchange(lock, myLock);
+    Exchange(lock, myLock);		// se puede obviar
     while(myLock == 1){
         while(lock == 1)
             ;
@@ -54,7 +55,7 @@ CSEntry
 
 CSExit
     
-    lock = 1;
+    lock = 0;
     
 ### 3. (2 puntos)
 - Considera el siguiente par de primitivas de paso de mensaje:
@@ -126,7 +127,7 @@ CSExit
                 if((indice % N) == 1){  /* primero */
                     wait();
                         /* se ha asignado a su compañero en la siguiente posición asi que se devuelve*/
-                    return ID[indice + 1];
+                    return ID[indice - 1];
                 }
                 else {  /* segundo */
                     int ret = ID[indice];
@@ -147,9 +148,10 @@ CSExit
                 
                 /* Mientras no se llegue al último proceso*/
             while(j < N){
-                    /* Espero a todos los procesos A MI DERECHA */
-                send barrera[i + j]();
+                    /* Aviso a todos los procesos A MI DERECHA */
+                send barrera[(i + j) % N]();
                     /* Espero testigo de mis procesos A LA IZQUIERDA */
                 receive barrera[j]();
+				j = j + j;
             }
         }
