@@ -63,21 +63,23 @@
 - De esta forma, el algoritmo espera cuando:
 	- "Hay un proceso que va por una etapa por delante o el último de la etapa j soy yo"
 
-		process CS[i = 1 to N]
-			while(true){
-					/* Para cada una de las etapas*/
-				for[j = 1 to N]{
-					in[i] = j;		/* Proceso i llega a etapa j */
-					last[j] = i;
-					for[k = 1 to N with k != i]
-						while(in[k] >= in[i] && last[j] == i)
-							;
+
+
+			process CS[i = 1 to N]
+				while(true){
+						/* Para cada una de las etapas*/
+					for[j = 1 to N]{
+						in[i] = j;		/* Proceso i llega a etapa j */
+						last[j] = i;
+						for[k = 1 to N with k != i]
+							while(in[k] >= in[i] && last[j] == i)
+								;
+					}
+					CS;
+						/* Proceso i en SC */
+					in[i] = 0;
+					noCS;
 				}
-				CS;
-					/* Proceso i en SC */
-				in[i] = 0;
-				noCS;
-			}
 	
 #### 1.4. Solución 4: Algoritmo del Ticket
 
