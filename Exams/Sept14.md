@@ -10,6 +10,7 @@
         // z = x + y;
         // <await (x>0) x = 0; y = 0; z = 0;>
         OC
+		
 - En los procesos primero y tercero, las acciones atómicas son leer y escribir las variables individuales.
 - Los procesos segundo y cuarto son en sí una acción atómica.
 

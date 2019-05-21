@@ -140,7 +140,7 @@ Porque es la solución **tie-break**, que por definición es justa.
 
 ### 4. (2.5 puntos)
 - Desarrolla en Java la implementación de un servidor **EchoServer** concurrente usando **Sockets** que funcione de la siguiente forma: cada vez que el servidor recibe nueva solicitud de conexión crea un nuevo proceso para atenderla.
-- El nuevo proceso establece los flujos de entrada y saldia para la comunicación entre cliente y servidor y comienza a leer repetidamente una línea por flujo de entrada y la envía tal cual por flujo de salida.
+- El nuevo proceso establece los flujos de entrada y salida para la comunicación entre cliente y servidor y comienza a leer repetidamente una línea por flujo de entrada y la envía tal cual por flujo de salida.
 - El proceso termina cuando llega la línea "Bye".
 - El puerto en el que se espera conexión es el 10008.
 - RECORDATORIO: En la implementación utiliza las siguientes clases y métodos de las librerías de Java: clase ServerSocket (métodos accept y close), clase Socket (métodos getInputStream, getOutputStream y close), clase PrintWriter (método println), clase BufferedReader (método readLine).
@@ -150,17 +150,33 @@ Porque es la solución **tie-break**, que por definición es justa.
         
         class EchoServer {
             private ServerSocket ss = new ServerSocket(10008);
-            private BufferedReader br;
             private Socket s;
-            private PrintWriter pw;
 			
 			public class Request extends Thread {
 			
+				private PrintWriter pw;
+				private BufferedReader br;
+				
+				public Request(Socket s){
+					pw = new PrintWriter(s.getOutputStream());
+					br = new BufferedReader(s.getInputStream());
+				}
+				
+				public void run(){
+					String str = br.readLine();
+					while(!str.equals("Bye")){
+						pw.println(str);
+						str = br.readLine();
+					}
+				}
 			}
 			
-			public boolean request(int clientId){
-				Socket s = new Socket(ss.getInetAddress(),10008);
-				
+			public void run(){
+				while(true){
+					Socket s = new Socket(ss.accept());
+					Request th = new Request(s);
+					s.start();
+				}
 			}
 			
         }
