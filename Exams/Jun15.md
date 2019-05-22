@@ -60,7 +60,6 @@ Porque es la solución **tie-break**, que por definición es justa.
                     P(lock);
                     if(nr > 0){
                         dr = dr + 1;
-                        V(lock);
                         P(full);
                     }
                     
